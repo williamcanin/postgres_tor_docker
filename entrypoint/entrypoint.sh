@@ -54,4 +54,6 @@ start_postgresql
 
 # Mantem o servidor rodando [NÃO REMOVER]:
 # --------------------------------------------------------------------------------------
-tail -f /dev/null
+echo "[+] Container pronto."
+exec sudo -u postgres /usr/lib/postgresql/$POSTGRESQL_VERSION/bin/postgres -D /etc/postgresql/$POSTGRESQL_VERSION/main
+# tail -f /dev/null
