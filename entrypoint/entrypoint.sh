@@ -53,7 +53,7 @@ if [ ! -f "$INIT_FLAG" ]; then
   sql_postgresql "$POSTGRES_PASSWORD"
   stop_postgresql
   postgresql_conf "$POSTGRESQL_VERSION"
-  touch "$INIT_FLAG"
+  sudo touch "$INIT_FLAG"
   echo "[+] Inicialização completa."
 else
   echo "[+] Inicialização já foi feita anteriormente. Pulando etapa de setup."
