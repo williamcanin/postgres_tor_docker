@@ -9,8 +9,8 @@ USER root
 
 # Instala dependências e o PostgreSQL:
 # --------------------------------------------------------------------------------------
-RUN apt update && apt install -y postgresql tor dos2unix git sudo vim zsh vim curl \
-net-tools nftables && apt clean
+RUN apt update && apt install -y postgresql procps tor torsocks dos2unix git sudo vim \
+zsh vim curl net-tools nftables && apt clean
 
 # Removendo apt lists:
 # NOTA: Ao remover não conseguirá instalar mais pacotes. Descomente caso não queira
@@ -20,7 +20,7 @@ net-tools nftables && apt clean
 
 # Cria um novo usuário no sistema:
 # --------------------------------------------------------------------------------------
-RUN useradd -ms /bin/zsh $USER && usermod -aG sudo,users,postgres $USER
+RUN useradd -ms /bin/zsh $USER && usermod -aG sudo,users,postgres,debian-tor $USER
 RUN echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 RUN chown -R ${USER}:${USER} /home/${USER}
 
@@ -35,11 +35,12 @@ COPY ./entrypoint/* /usr/local/entrypoint/
 COPY ./config/nftables.conf /etc/nftables.conf
 COPY ./config/pg_hba.conf /opt/pg_hba.conf
 COPY ./config/postgresql.conf /opt/postgresql.conf
+COPY ./config/torctl.sh /etc/init.d/torctl
 
 # Dá permissão de execução aos scripts:
 # --------------------------------------------------------------------------------------
 RUN chmod +x /usr/local/entrypoint/entrypoint.sh /usr/local/entrypoint/sql.sh \
-/usr/local/entrypoint/firewall.sh
+/usr/local/entrypoint/firewall.sh /etc/init.d/torctl
 
 # Converte arquivos para LF (do sistema):
 # --------------------------------------------------------------------------------------

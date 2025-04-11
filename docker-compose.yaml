@@ -2,6 +2,9 @@ services:
   postgres:
     cap_add:
       - NET_ADMIN # Importante para usar firewall (NFTables)
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     env_file:
       - .env
     image: database:latest
@@ -25,12 +28,12 @@ services:
       - pg_data:/var/lib/postgresql/data
       - home:/home/${USER}
     restart: unless-stopped
-    # networks:
-    #   - backend
+    networks:
+      - backend
 
 volumes:
   pg_data:
   home:
 
-# networks:
-#   backend:
+networks:
+  backend:
