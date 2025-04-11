@@ -61,6 +61,14 @@ postgresql_conf() {
   message "[+] Configuração do PostGreSQL terminada!" "green"
 }
 
+# Função para iniciar o Tor:
+# --------------------------------------------------------------------------------------
+tor_start() {
+  message "[+] Iniciando Tor..." "cyan"
+  sudo /etc/init.d/torctl restart
+  message "[+] Tor iniciado!" "green"
+}
+
 # Aplica as configurações:
 # --------------------------------------------------------------------------------------
 if [ ! -f "$FLAG_FILE" ]; then
@@ -77,9 +85,11 @@ else
     message "[+] Configuração já foi feita anteriormente. Pulando etapa de configuração." "yellow"
 fi
 
-# Mantem o servidor rodando [NÃO REMOVER]:
-# --------------------------------------------------------------------------------------
+tor_start
 message "Todos os serviços iniciados." "green"
 message "[+] Container pronto !!!" "green"
+
+# Mantem o servidor rodando [NÃO REMOVER]:
+# --------------------------------------------------------------------------------------
 sleep 1
 exec sudo -u $PGUSER /usr/lib/postgresql/$POSTGRESQL_VERSION/bin/postgres -D /etc/postgresql/$POSTGRESQL_VERSION/main
