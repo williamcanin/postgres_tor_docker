@@ -3,5 +3,5 @@
 ```shell
 docker compose build
 docker compose up -d
-docker exec -it postgres /bin/zsh
+docker exec -it postgres_tor /bin/zsh
 ```
