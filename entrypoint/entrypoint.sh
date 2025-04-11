@@ -2,6 +2,8 @@
 # ------------------------------ entrypoint.sh -----------------------------------------
 set -e
 
+INIT_FLAG="/var/lib/postgresql/.initialized"
+
 # Carregando libs:
 # --------------------------------------------------------------------------------------
 source /usr/local/entrypoint/sql.sh
@@ -43,12 +45,19 @@ postgresql_conf() {
 
 # Iniciando as funções e ações das mesmas:
 # --------------------------------------------------------------------------------------
-root_password $PASSWORD
-start_firewall
-start_postgresql
-sql_postgresql $POSTGRES_PASSWORD
-stop_postgresql
-postgresql_conf $POSTGRESQL_VERSION
+if [ ! -f "$INIT_FLAG" ]; then
+  echo "[+] Primeira inicialização detectada. Configurando sistema..."
+  root_password "$PASSWORD"
+  start_firewall
+  start_postgresql
+  sql_postgresql "$POSTGRES_PASSWORD"
+  stop_postgresql
+  postgresql_conf "$POSTGRESQL_VERSION"
+  touch "$INIT_FLAG"
+  echo "[+] Inicialização completa."
+else
+  echo "[+] Inicialização já foi feita anteriormente. Pulando etapa de setup."
+fi
 
 
 # Mantem o servidor rodando [NÃO REMOVER]:
