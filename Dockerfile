@@ -9,9 +9,8 @@ USER root
 
 # Instala dependências e o PostgreSQL:
 # --------------------------------------------------------------------------------------
-RUN apt update && \
-apt install -y postgresql tor dos2unix git sudo vim zsh vim curl net-tools \
-nftables && apt clean
+RUN apt update && apt install -y postgresql tor dos2unix git sudo vim zsh vim curl \
+net-tools nftables && apt clean
 
 # Removendo apt lists:
 # NOTA: Ao remover não conseguirá instalar mais pacotes. Descomente não queira
