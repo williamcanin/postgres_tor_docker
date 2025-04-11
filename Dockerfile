@@ -25,14 +25,16 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 # Copia scripts para o container:
 # --------------------------------------------------------------------------------------
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN mkdir -p /usr/local/entrypoint
+COPY ./entrypoint/* /usr/local/entrypoint/
 COPY nftables.conf /etc/nftables.conf
 COPY pg_hba.conf /opt/pg_hba.conf
 COPY postgresql.conf /opt/postgresql.conf
 
 # Dá permissão de execução aos scripts:
 # --------------------------------------------------------------------------------------
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/entrypoint/entrypoint.sh /usr/local/entrypoint/sql.sh \
+/usr/local/entrypoint/firewall.sh
 
 # Converte arquivos para LF (do sistema):
 # --------------------------------------------------------------------------------------
@@ -55,4 +57,4 @@ COPY .zshrc /home/${USER}/.zshrc
 
 # Define o entrypoint:
 # --------------------------------------------------------------------------------------
-ENTRYPOINT ["zsh", "/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["zsh", "/usr/local/entrypoint/entrypoint.sh"]

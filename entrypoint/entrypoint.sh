@@ -2,65 +2,15 @@
 # ------------------------------ entrypoint.sh -----------------------------------------
 set -e
 
+# Carregando libs:
+# --------------------------------------------------------------------------------------
+source /usr/local/entrypoint/sql.sh
+source /usr/local/entrypoint/firewall.sh
+
 # Função para alterar a senha de root:
 # --------------------------------------------------------------------------------------
 root_password() {
   echo "root:$1" | sudo chpasswd
-}
-
-# Função para criar serviço de firewall (NFTables):
-# --------------------------------------------------------------------------------------
-start_firewall() {
-
-  sudo tee /etc/init.d/nftables > /dev/null << 'EOF'
-#!/bin/sh
-### BEGIN INIT INFO
-# Provides:          nftables
-# Required-Start:    $network
-# Required-Stop:
-# Default-Start:     2 3 4 5
-# Default-Stop:
-# Short-Description: Firewall usando nftables
-### END INIT INFO
-
-NFT="/usr/sbin/nft"
-RULES="/etc/nftables.conf"
-
-case "$1" in
-  start)
-    echo "Aplicando regras de firewall..."
-    $NFT -f "$RULES"
-    echo "Feito!"
-    ;;
-  stop)
-    echo "Parado firewall..."
-    $NFT flush ruleset
-    echo "Firewall parado!"
-    ;;
-  restart)
-    echo "Reaplicando regras de firewall..."
-    $NFT flush ruleset
-    $NFT -f "$RULES"
-    echo "Feito!"
-    ;;
-  status)
-    echo "Status das regras de firewall:"
-    $NFT list ruleset
-    ;;
-  edit)
-    vim +startinsert "$RULES"
-    ;;
-  *)
-    echo "Uso: $0 {start|stop|restart|edit|status}"
-    exit 1
-esac
-
-exit 0
-EOF
-
-  sudo chmod +x /etc/init.d/nftables
-  sudo update-rc.d nftables defaults
-  sudo /etc/init.d/nftables start
 }
 
 # Função para iniciar o PostGreSQL:
@@ -72,51 +22,6 @@ start_postgresql() {
       sleep 1
   done
   echo "[+] PostGreSQL iniciado!"
-}
-
-# Função para:
-# - alterar a PASSWORD do usuário 'postgres'
-# - criar novo USER com senha
-# - criar novo DATABASE para esse usuário
-# - criar novo SCHEMA para esse usuário
-# --------------------------------------------------------------------------------------
-sql_postgresql() {
-  sudo -u postgres psql -v ON_ERROR_STOP=1 postgres <<-EOSQL
-    -- Cria usuário se não existir
-    DO \$\$
-    BEGIN
-      IF NOT EXISTS (
-          SELECT FROM pg_catalog.pg_user WHERE usename = '${POSTGRES_USER}'
-      ) THEN
-          CREATE USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';
-      END IF;
-    END
-    \$\$;
-
-    -- Cria o banco de dados se não existir
-    SELECT 'CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER}'
-    WHERE NOT EXISTS (
-        SELECT FROM pg_database WHERE datname = '${POSTGRES_DB}'
-    )\gexec
-EOSQL
-
-  # Cria schema (dentro do novo banco) e aplica grants
-  sudo -u postgres psql -v ON_ERROR_STOP=1 "${POSTGRES_DB}" <<-EOSQL
-    DO \$\$
-    BEGIN
-      IF NOT EXISTS (
-          SELECT FROM pg_namespace WHERE nspname = '${POSTGRES_SCHEMA}'
-      ) THEN
-          CREATE SCHEMA ${POSTGRES_SCHEMA} AUTHORIZATION ${POSTGRES_USER};
-      END IF;
-    END
-    \$\$;
-
-    GRANT ALL ON SCHEMA ${POSTGRES_SCHEMA} TO ${POSTGRES_USER};
-EOSQL
-
-  # Altera senha do usuário postgres
-  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$1';"
 }
 
 stop_postgresql() {
