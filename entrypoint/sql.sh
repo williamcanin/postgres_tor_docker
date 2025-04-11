@@ -40,6 +40,7 @@ EOSQL
     \$\$;
 
     GRANT ALL ON SCHEMA ${POSTGRES_SCHEMA} TO ${POSTGRES_USER};
+    GRANT ALL ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
 EOSQL
 
   # Altera senha do usuário postgres
