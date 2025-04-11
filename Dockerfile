@@ -38,7 +38,7 @@ RUN chmod +x /usr/local/entrypoint/entrypoint.sh /usr/local/entrypoint/sql.sh \
 
 # Converte arquivos para LF (do sistema):
 # --------------------------------------------------------------------------------------
-RUN dos2unix /usr/local/bin/entrypoint.sh /opt/pg_hba.conf /opt/postgresql.conf
+RUN dos2unix /usr/local/entrypoint/entrypoint.sh /opt/pg_hba.conf /opt/postgresql.conf
 
 # Entra no usuário criado:
 # --------------------------------------------------------------------------------------
