@@ -43,5 +43,5 @@ EOSQL
 EOSQL
 
   # Altera senha do usuário postgres
-  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$1';"
+  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';"
 }

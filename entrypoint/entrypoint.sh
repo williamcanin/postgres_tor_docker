@@ -30,22 +30,30 @@ start_postgresql() {
 
 stop_postgresql() {
   echo "Parando o PostgreSQL com segurança..."
-
-  PGDATA="/var/lib/postgresql/data"  # ou o caminho real do seu diretório de dados
-
-  sudo -u "$PGUSER" /usr/lib/postgresql/$1/bin/pg_ctl stop -D "$PGDATA" -m fast
-
-  if [ $? -eq 0 ]; then
-    echo "PostgreSQL parado com sucesso."
-  else
-    echo "[ERROR] Falha ao parar o PostgreSQL."
-  fi
+  sudo /etc/init.d/postgresql stop
+  sleep 1
+  echo "PostgreSQL parado com sucesso."
 }
+
+# # DEPRECATED
+# stop_postgresql() {
+#   echo "Parando o PostgreSQL com segurança..."
+
+#   PGDATA="/var/lib/postgresql/data"  # ou o caminho real do seu diretório de dados
+
+#   sudo -u "$PGUSER" /usr/lib/postgresql/$1/bin/pg_ctl stop -D "$PGDATA" -m fast
+
+#   if [ $? -eq 0 ]; then
+#     echo "PostgreSQL parado com sucesso."
+#   else
+#     echo "[ERROR] Falha ao parar o PostgreSQL."
+#   fi
+# }
 
 # Função para aplicar nova .conf no PostGreSQL:
 # --------------------------------------------------------------------------------------
 postgresql_conf() {
-  stop_postgresql "$1"
+  stop_postgresql
   echo "[+] Copiando nova configuração do PostGreSQL..."
   sudo cp -f /opt/pg_hba.conf /etc/postgresql/$1/main/pg_hba.conf || true
   sudo cp -f /opt/postgresql.conf /etc/postgresql/$1/main/postgresql.conf || true
@@ -60,7 +68,7 @@ if [ ! -f "$FLAG_FILE" ]; then
     root_password "$PASSWORD"
     start_firewall
     start_postgresql
-    sql_postgresql "$POSTGRES_PASSWORD"
+    sql_postgresql
     postgresql_conf "$POSTGRESQL_VERSION"
     sudo touch "$INIT_FLAG"
     echo "[+] Configuração completa."
