@@ -7,6 +7,7 @@ PGUSER="postgres"
 
 # Carregando libs:
 # --------------------------------------------------------------------------------------
+source /usr/local/entrypoint/message.sh
 source /usr/local/entrypoint/sql.sh
 source /usr/local/entrypoint/firewall.sh
 
@@ -19,20 +20,20 @@ root_password() {
 # Função para iniciar o PostGreSQL:
 # --------------------------------------------------------------------------------------
 start_postgresql() {
-  echo "[+] Iniciando PostgreSQL..."
+  message "[+] Iniciando PostgreSQL..." "cyan"
   sudo /etc/init.d/postgresql start
   until pg_isready -U $PGUSER; do
-      echo "[+] Esperando PostGreSQL..."
+      message "[+] Esperando PostGreSQL..." "cyan"
       sleep 1
   done
-  echo "[+] PostGreSQL iniciado!"
+  message "[+] PostGreSQL iniciado!" "green"
 }
 
 stop_postgresql() {
-  echo "Parando o PostgreSQL com segurança..."
+  message "Parando o PostgreSQL com segurança..." "cyan"
   sudo /etc/init.d/postgresql stop
   sleep 1
-  echo "PostgreSQL parado com sucesso."
+  message "PostgreSQL parado com sucesso." "green"
 }
 
 # # DEPRECATED
@@ -53,33 +54,32 @@ stop_postgresql() {
 # Função para aplicar nova .conf no PostGreSQL:
 # --------------------------------------------------------------------------------------
 postgresql_conf() {
-  echo "[+] Copiando nova configuração do PostGreSQL..."
+  message "[+] Copiando nova configuração do PostGreSQL..." "cyan"
   sudo cp -f /opt/pg_hba.conf /etc/postgresql/$1/main/pg_hba.conf || true
   sudo cp -f /opt/postgresql.conf /etc/postgresql/$1/main/postgresql.conf || true
   sudo rm -f /opt/postgresql.conf /opt/pg_hba.conf
-  echo "[+] Configuração do PostGreSQL terminada!"
+  message "[+] Configuração do PostGreSQL terminada!" "green"
 }
 
 # Aplica as configurações:
 # --------------------------------------------------------------------------------------
 if [ ! -f "$FLAG_FILE" ]; then
-    echo "[+] Primeira inicialização detectada. Configurando sistema..."
+    message "[+] Primeira inicialização detectada. Configurando sistema..." "cyan"
     root_password "$PASSWORD"
     start_firewall
     start_postgresql
     sql_postgresql
     stop_postgresql
     postgresql_conf "$POSTGRESQL_VERSION"
-    sudo touch "$INIT_FLAG"
-    echo "[+] Configuração completa."
     sudo touch "$FLAG_FILE"
+    message "[+] Configuração completa." "green"
 else
-    echo "[+] Configuração já foi feita anteriormente. Pulando etapa de configuração."
+    message "[+] Configuração já foi feita anteriormente. Pulando etapa de configuração." "yellow"
 fi
 
 # Mantem o servidor rodando [NÃO REMOVER]:
 # --------------------------------------------------------------------------------------
-echo "Todos os serviços iniciados."
-echo "[+] Container pronto."
+message "Todos os serviços iniciados." "green"
+message "[+] Container pronto !!!" "green"
 sleep 1
 exec sudo -u $PGUSER /usr/lib/postgresql/$POSTGRESQL_VERSION/bin/postgres -D /etc/postgresql/$POSTGRESQL_VERSION/main
