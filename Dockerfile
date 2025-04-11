@@ -27,9 +27,9 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 # --------------------------------------------------------------------------------------
 RUN mkdir -p /usr/local/entrypoint
 COPY ./entrypoint/* /usr/local/entrypoint/
-COPY nftables.conf /etc/nftables.conf
-COPY pg_hba.conf /opt/pg_hba.conf
-COPY postgresql.conf /opt/postgresql.conf
+COPY ./config/nftables.conf /etc/nftables.conf
+COPY ./config/pg_hba.conf /opt/pg_hba.conf
+COPY ./config/postgresql.conf /opt/postgresql.conf
 
 # Dá permissão de execução aos scripts:
 # --------------------------------------------------------------------------------------
