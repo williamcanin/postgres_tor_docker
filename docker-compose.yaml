@@ -19,16 +19,18 @@ services:
     container_name: postgres
     ports:
       - "5433:5432"
+      - "8080:80"
+      - "9051:9050"
     volumes:
       - pg_data:/var/lib/postgresql/data
       - home:/home/${USER}
     restart: unless-stopped
-    networks:
-      - backend
+    # networks:
+    #   - backend
 
 volumes:
   pg_data:
   home:
 
-networks:
-  backend:
+# networks:
+#   backend:
