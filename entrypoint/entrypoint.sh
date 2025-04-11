@@ -7,9 +7,9 @@ PGUSER="postgres"
 
 # Carregando libs:
 # --------------------------------------------------------------------------------------
-source /usr/local/entrypoint/message.sh
-source /usr/local/entrypoint/sql.sh
-source /usr/local/entrypoint/firewall.sh
+source /usr/local/entrypoint/lib_message.sh
+source /usr/local/entrypoint/lib_sql.sh
+source /usr/local/entrypoint/lib_firewall.sh
 
 # Função para alterar a senha de root:
 # --------------------------------------------------------------------------------------
