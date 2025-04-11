@@ -49,7 +49,7 @@ start_postgresql
 sql_postgresql $POSTGRES_PASSWORD
 stop_postgresql
 postgresql_conf $POSTGRESQL_VERSION
-start_postgresql
+# start_postgresql
 
 
 # Mantem o servidor rodando [NÃO REMOVER]:
