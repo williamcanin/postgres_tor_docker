@@ -1,5 +1,5 @@
 services:
-  postgres:
+  postgres_tor:
     cap_add:
       - NET_ADMIN # Importante para usar firewall (NFTables)
     dns:
@@ -7,7 +7,7 @@ services:
       - 1.1.1.1
     env_file:
       - .env
-    image: database:latest
+    image: postgres_tor:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -23,7 +23,7 @@ services:
     ports:
       - "5433:5432"
       - "8080:80"
-      - "9051:9050"
+      - "9052:9050"
     volumes:
       - pg_data:/var/lib/postgresql/data
       - home:/home/${USER}
