@@ -53,7 +53,6 @@ stop_postgresql() {
 # Função para aplicar nova .conf no PostGreSQL:
 # --------------------------------------------------------------------------------------
 postgresql_conf() {
-  stop_postgresql
   echo "[+] Copiando nova configuração do PostGreSQL..."
   sudo cp -f /opt/pg_hba.conf /etc/postgresql/$1/main/pg_hba.conf || true
   sudo cp -f /opt/postgresql.conf /etc/postgresql/$1/main/postgresql.conf || true
@@ -69,6 +68,7 @@ if [ ! -f "$FLAG_FILE" ]; then
     start_firewall
     start_postgresql
     sql_postgresql
+    stop_postgresql
     postgresql_conf "$POSTGRESQL_VERSION"
     sudo touch "$INIT_FLAG"
     echo "[+] Configuração completa."
