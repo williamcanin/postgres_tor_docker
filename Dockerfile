@@ -13,8 +13,8 @@ RUN apt update && apt install -y postgresql tor dos2unix git sudo vim zsh vim cu
 net-tools nftables && apt clean
 
 # Removendo apt lists:
-# NOTA: Ao remover não conseguirá instalar mais pacotes. Descomente não queira
-# mais pacotes.
+# NOTA: Ao remover não conseguirá instalar mais pacotes. Descomente caso não queira
+# instalar mais pacotes em sua imagem.
 # --------------------------------------------------------------------------------------
 # RUN rm -rf /var/lib/apt/lists/*
 
